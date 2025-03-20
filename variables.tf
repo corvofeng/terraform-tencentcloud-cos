@@ -62,8 +62,20 @@ variable "force_clean" {
 }
 
 variable "lifecycle_rules" {
-  description = "Lifecycle rules to the bucket."
-  default     = []
+  description = "List of lifecycle rules for the COS bucket"
+  type = list(object({
+    filter_prefix = optional(string, "") # Prefix to filter objects for the rule
+    expiration = optional(list(object({
+      date = optional(string, null) # Expiration date in ISO 8601 format
+      days = optional(number, null) # Number of days after object creation to expire
+    })), [])
+    transition = optional(list(object({
+      storage_class = optional(string, null) # Storage class to transition to
+      date          = optional(string, null) # Transition date in ISO 8601 format
+      days          = optional(number, null) # Number of days after object creation to transition
+    })), [])
+  }))
+  default = []
 }
 
 variable "log_enable" {
